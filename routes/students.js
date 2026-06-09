@@ -15,7 +15,9 @@ const serializeError = (err, file = __filename) => ({
   message: err.message,
   stack: err.stack,
   ...Object.fromEntries(
-    Object.entries(err).filter(([k]) => !["name", "message", "stack"].includes(k))
+    Object.entries(err).filter(
+      ([k]) => !["name", "message", "stack"].includes(k),
+    ),
   ),
 });
 
@@ -36,11 +38,11 @@ router.post("/", (req, res) => {
   const { name, age, email, fees } = req.body;
   try {
     const result = db
-      .prepare(
-        "INSERT INTO StudentFees (Name, Age, Email, Fees) VALUES (?, ?, ?, ?)",
-      )
+      .prepare("INSERT INTO StudentFees (Age, Email, Fees) VALUES (?, ?, ?, ?)")
       .run(name, parseInt(age), email, toFees(fees));
-    const student = db.prepare(`${SELECT} WHERE Id = ?`).get(result.lastInsertRowid);
+    const student = db
+      .prepare(`${SELECT} WHERE Id = ?`)
+      .get(result.lastInsertRowid);
     res.status(201).json(student);
   } catch (err) {
     logError("POST /students failed", err, __filename);
@@ -55,7 +57,9 @@ router.put("/:id", (req, res) => {
   const { name, age, email, fees } = req.body;
   try {
     const result = db
-      .prepare("UPDATE StudentFees SET Name = ?, Age = ?, Email = ?, Fees = ? WHERE Id = ?")
+      .prepare(
+        "UPDATE StudentFees SET Name = ?, Age = ?, Email = ?, Fees = ? WHERE Id = ?",
+      )
       .run(name, parseInt(age), email, toFees(fees), id);
     if (result.changes === 0)
       return res.status(404).json({ error: "Student not found" });
