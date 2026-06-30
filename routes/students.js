@@ -38,7 +38,7 @@ router.post("/", (req, res) => {
   const { name, age, email, fees } = req.body;
   try {
     const result = db
-      .prepare("INSERT INTO StudentFees (Age, Email, Fees) VALUES (?, ?, ?, ?)")
+      .prepare("INSERT INTO StudentFees (Name, Age, Email, Fees) VALUES (?, ?, ?, ?)")
       .run(name, parseInt(age), email, toFees(fees));
     const student = db
       .prepare(`${SELECT} WHERE Id = ?`)
